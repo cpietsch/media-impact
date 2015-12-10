@@ -12,6 +12,8 @@ Created at the course "Dataviz Challenges 2013" at FH Potsdam
 https://github.com/FH-Potsdam/dataviz-2013
 https://incom.org/workspace/4324
 
+![](https://raw.githubusercontent.com/cpietsch/media-impact/master/dataviz-pietsch/dataviz-pietsch.004.jpeg)
+
 #GERMAN Documentation
 
 ##Idee
