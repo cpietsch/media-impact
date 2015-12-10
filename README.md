@@ -3,14 +3,16 @@ media-impact
 
 Using various data sources to visualize the digital impact of meteorites
 
-Currently whe are preparing the documentation.
 There is already a foto-stream of the process online.
 http://www.flickr.com/photos/58821321@N06/sets/72157634070386066/
 
 This project is part of the http://visualizing.org/contests/visualizing-meteorites Challenge.
 
+Created at the course "Dataviz Challenges 2013" at FH Potsdam
+https://github.com/FH-Potsdam/dataviz-2013
+https://incom.org/workspace/4324
 
-GERMAN
+#GERMAN Documentation
 
 ##Idee
 Wie groß ist der mediale Einschlag der Meteoriten im Internet und wie kann man diesen Einschlag in Verbindung mit der Masse, Jahr des Einschlags und anderen Parametern setzen?
