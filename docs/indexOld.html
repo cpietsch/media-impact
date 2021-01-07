@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Impact Factor</title>
+		<script type="text/javascript" src="lib/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="lib/d3.v3.min.js"></script>
+        
+        
+		<style type="text/css">
+			/* No style rules here yet */		
+			body,html{
+			  height:100%;
+			}
+			body {
+				font-family: "Courier New", Courier, monospace;
+				padding: 0;
+				margin: 0;
+				background-color:#F2F2F2;
+				overflow: hidden;
+			}
+			a{
+				color:#000;
+				padding-left:0px;
+				}
+			
+			
+			a:active,visited{
+				color:#000;
+				}
+				
+			a:hover{
+				color:#333;
+				}
+			
+			h1 {
+				line-height:0.6em;
+				font-size: 20px;
+			}
+				
+			h2 {
+				font-size: 15px;
+			}
+			p {
+				margin: 0;
+				padding: 0;
+				padding-bottom: 5px;
+			}
+
+			
+			.define_meteor {
+		 		position: relative;
+		 		float: left;
+		 		width: 100%;
+			}
+
+			#meteoritOuter {
+				position: absolute;
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+			}
+			.meteorImg {
+				position: absolute;
+				height: 300px;
+				width: 8000px;
+				margin-left: -3610px;
+				text-align: center;
+				left: 100px;
+			}
+			.meteorImg img {
+
+				-webkit-transition: width 200ms ease-in;
+				-o-transition: opacity 1s linear;
+				-moz-transition: opacity 1s linear;
+				transition: width 200ms ease-in;
+			}
+
+			.meteorImg .crater {
+				width: 100%;
+				position: absolute;
+				padding-top: 240px;
+			}
+			.meteorImg .meteorit {
+				width: 100%;
+				position: absolute;
+				z-index: 10;
+				bottom: 14px;
+			}
+			
+			.first, .second{
+					margin:0 0 0 -200px;
+					position:absolute;top:1o0;left:50%;
+			}
+			
+			.second{
+					margin:-150px 0 0 -100px;
+			}
+
+			
+			.description {
+				width: 230px;
+				background-color:#fff;
+				position: absolute;
+				margin: 0 10%;
+				font-size:12px;
+				z-index:55;
+				top:70px;
+				float: left;
+				opacity: 0.9;	
+			}
+				
+			.descriptionBlocks {
+				width: 100%;
+				float:left;
+				padding-left:20px;
+				padding-top:18px;
+		
+				}	
+				
+			.descriptionBlocks .img {
+				display:block;
+				float:left;
+	
+			}		
+			
+		
+			#sort {
+				height: 50px;
+				position: absolute;
+				font-size: 11px;
+				padding-top: 8px;
+				right: 27px;
+			}
+			#barContainter {
+				width: 100%;
+				height: 100%;
+				margin-top: 30px;
+				overflow: scroll;
+				position: relative;
+				float: left;
+			}
+
+			#barContainter div.active:hover {
+				height: 20px;
+			}
+			
+			#barContainter:hover .active {
+				height: 5px;
+			}
+			#barContainter:hover span {
+				display: none !important;
+			}
+			
+			#barContainter > div:hover span {
+				 display: block!important; 
+			}
+			
+			#barContainter > div {
+				margin: auto;
+				clear: both;
+				padding-bottom: 1px;
+				height: 5px;
+				cursor: pointer;
+				opacity: 0.8;
+			}
+			#barContainter > div:hover {
+
+				height: 20px;
+				padding-top: 3px;
+				padding-bottom: 3px;
+				opacity: 1;
+
+
+			}
+			#barContainter > div:hover .mass > div,  #barContainter > div:hover .impact > div{
+				
+
+			}
+			#barContainter > div:hover > div{
+				background: #FFF;
+				/* -webkit-transition: background 100ms linear; */
+			}
+
+
+			#barContainter div.active {
+				height: 20px;
+				padding-top: 3px;
+				padding-bottom: 3px;
+				opacity: 1;
+			}
+			#barContainter > div.active > div{
+				background: #FFF;
+			}
+			#barContainter > div.active span {
+				 display: block; 
+			}
+			#barContainter > div.active .mass > div,  #barContainter > div.active .impact > div{
+				
+			}
+			#barContainter > div:hover > div {
+
+			}
+			#barContainter > div > div {
+				float: left;
+				width:50%;
+				height: 100%;
+			}
+			#barContainter .mass div {
+				float: right;
+				background: #303030;
+				width: 30%;
+				height: 100%;
+				border-right: 1px solid #F2F2F2;
+				
+			}
+			#barContainter .impact div {
+				float: left;
+				background: #9B7757;
+				width: 50%;
+				height: 100%;
+			}
+			#barContainter span {
+				position: absolute;
+				display: none;
+				padding-left: 6px;
+				padding-top: 3px;
+				font-size: 13px;
+				z-index: 100;
+			}
+			#barContainter .impact span {
+				right: 10px;
+			}
+
+
+			#right {
+				right: 0px;
+				height: 100%;
+				width: 400px;
+				position: absolute;
+				z-index: 400;
+			}
+			#rightBack {
+				right: 0px;
+				height: 100%;
+				width: 208px;
+				position: absolute;
+				z-index: 300;
+				background: #FFFFFF;
+				opacity: 0.9;
+			}
+			
+			#left {
+				width: 70%;
+				height: 100%;
+				float: left;
+				z-index: 200;
+			}
+			.description .place,.description .year {
+				font-weight: bold;
+			}
+			.description .mass,  .description .impact{
+				font-size: 15px;
+				font-weight: bold;
+			}
+		</style>
+        
+
+        
+	</head>
+	<body> 
+ 	<div id="meteoritOuter">
+        	<div class="meteorImg">
+        	<div class="meteorit">
+            	<img src="images/meteorit.svg" alt="" class=""/>
+            </div>
+            <div class="crater">
+            	<img src="images/crater.svg" alt="" class=""/>
+            </div>
+        </div>
+    </div>
+ 	<div id ="left">
+ 		<div class="define_meteor"> 
+  
+			<div class="description">
+	        
+	        	<div class="descriptionBlocks">
+	            	<h1 class="name">NAME</h1>
+	            	<p>found <span class="year">1982</span> in <span class="place">Santiago</span></p>
+	            </div>
+	            
+	            <div class="descriptionBlocks">
+	            	<p>Mass:</p>
+	            	<p><span class="mass">128737281</span> kg</p>
+	            </div>
+	            
+	             <div class="descriptionBlocks">
+	            	<p>Media Impact: </p>
+	            	<p><span class="impact">1245353</span></p>
+	            </div>
+	            
+	            <div class="descriptionBlocks">
+	            	<p>About:</p>
+		            <img src="images/w.png"></img>
+		            <img src="images/t.png"></img>
+	            </div>
+	            
+	        </div>
+       
+        
+        </div>
+        
+ 	</div>
+ 	<div id ="rightBack"></div>
+ 	<div id ="right">
+ 		<div id="sort">
+ 			<span>sort by</span>
+ 			<span><a id="sortMass" href="#mass">mass</a></span>
+ 			<span><a id="sortImpact" href="#impact">impact</a></span>
+ 			<span><a id="sortYear" href="#year">year</a></span>
+ 		</div>
+		<div id="barContainter">
+			<!--
+			<div>
+				<div>
+					<div class="massBar"></div>
+				</div>
+				<div>
+					<div class="impactBar"></div>
+				</div>
+			</div>
+		    -->
+		</div>
+	</div>
+
+		
+		<script type="text/javascript" src="app.js"></script>			
+    </body>
+</html>

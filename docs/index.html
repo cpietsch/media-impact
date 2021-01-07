@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Media Impact</title>
+		<script type="text/javascript" src="lib/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="lib/d3.v3.min.js"></script>
+		<script src="lib/d3.geo.projection.v0.min.js"></script>
+		<script src="lib/topojson.v1.min.js"></script>
+        <script src="lib/radar-chart.js"></script>
+        
+        
+
+		<style type="text/css">
+			#sattelite #impact {
+				fill:#9B7757;
+			}
+			#sattelite #mass {
+				fill:#303030;
+			}
+
+			#sattelite .graticule {
+			  fill: none;
+			  stroke: #777;
+			  stroke-opacity:.2;
+			}
+
+			#sattelite .countries {
+			  fill: #ccc;
+			  fill-opacity: .3;
+			  stroke: #000;
+			  stroke-opacity: .2;
+			}
+			#sattelite .circle {
+				opacity: 0.8;
+			}
+			#sattelite {
+				position: absolute;
+			}
+			/* No style rules here yet */		
+			body,html{
+			  height:100%;
+			}
+			body {
+				font-family: "Courier New", Courier, monospace;
+				padding: 0;
+				margin: 0;
+				background-color:#F2F2F2;
+				/*overflow: hidden;*/
+			}
+			a{
+				color:#000;
+				padding-left:0px;
+				}
+			
+			
+			a:active,visited{
+				color:#000;
+				}
+				
+			a:hover{
+				color:#333;
+				}
+			
+			h1 {
+				line-height:0.6em;
+				font-size: 20px;
+			}
+				
+			h2 {
+				font-size: 15px;
+			}
+			p {
+				margin: 0;
+				padding: 0;
+				padding-bottom: 5px;
+			}
+
+			
+			.define_meteor {
+		 		position: relative;
+		 		float: left;
+		 		width: 100%;
+			}
+
+			#meteoritOuter {
+				/*position: absolute;
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+				*/
+			}
+			.meteorImg {
+				position: absolute;
+				height: 300px;
+				width: 8000px;
+				margin-left: -3610px;
+				text-align: center;
+				left: 130px;
+			}
+			.meteorImg img {
+
+				-webkit-transition: width 200ms ease-in;
+				-o-transition: opacity 1s linear;
+				-moz-transition: opacity 1s linear;
+				transition: width 200ms ease-in;
+			}
+
+			.meteorImg .crater {
+				width: 100%;
+				position: absolute;
+				padding-top: 240px;
+			}
+			.meteorImg .meteorit {
+				width: 100%;
+				position: absolute;
+				z-index: 10;
+				/*bottom: 14px;*/
+			}
+			
+			.media_content {
+		 		width: 80%;
+		 		margin: 0 15px;
+			}
+
+
+			.twitter_block {
+				width: 225px;
+				min-height: 135px;
+				background-color: #fff;
+				border-bottom: 5px solid #139AE7;
+				margin: 5px;
+				padding-left:10px;
+				font-size:12px;
+				display: block;
+				float: left;
+				opacity: 0.9;
+			}
+
+			.flickr_block {
+				width: 225px;
+				height: 135px;
+				overflow: hidden;
+				position: relative;
+				background-color: #fff;
+				border-bottom: 5px solid #FF0084;
+				margin: 5px;
+				display: block;
+				float: left;
+				opacity: 0.9;
+			}
+
+			.youtube_block {
+				width: 220px;
+				min-height: 135px;
+				background-color: #fff;
+				border-bottom: 5px solid #AF2B26;
+				margin: 5px;
+				padding-left: 5px;
+				display: block;
+				float: left;
+				opacity: 0.9;
+			}
+
+
+
+			.descriptionBlocks em {
+				font-weight: bold;
+				font-size: 15px;
+				font-variant: normal;
+			}
+			.descriptionBlocks i {
+				font-variant: normal;
+			}
+			.description {
+				position: relative;
+				width: 230px;
+				
+				height:460px;
+				margin-top: 30px;
+				margin-left: 30px;
+				
+				font-size:12px;
+				z-index:55;
+				
+				float: left;
+				opacity: 0.9;	
+			}
+			.description>div{
+				padding-left:20px;
+				padding-right:20px;
+				background-color:#fff;
+				position: absolute;
+				
+			}
+			
+				
+			.descriptionBlocks {
+				width: 215px;
+				float:left;
+				padding-top:10px;
+		
+				}	
+			.descriptionBlocks span {
+				float: right;
+				
+				font-size: 15px;
+				font-weight: bold;
+			}
+			.descriptionBlocks .img {
+				display:block;
+				float:left;
+				position: absolute;
+				top: 0px; 
+			}
+			.descriptionBlocks .small {
+				font-size: 12px;
+			}
+		
+			#sort {
+				height: 50px;
+				position: absolute;
+				font-size: 11px;
+				padding-top: 8px;
+				
+			}
+			#sort a {
+				text-decoration: none;
+				font-size: 12px;
+				text-transform: capitalize;
+			}
+			#sort a:hover {
+				font-weight: bold;
+			}
+			#sort .active {
+				font-weight: bold;
+			}
+			#sort .name {
+				width: 50px;
+				display: inline-block;
+			}
+			#sort .mass {
+				text-align: right;
+				display: inline-block;
+				width: 136px;
+			}
+			#sort .impact {
+				width: 149px;
+				display: inline-block;
+			}
+			#barContainter {
+				width: 100%;
+				
+				margin-top: 30px;
+				
+				position: relative;
+				float: left;
+			}
+
+			#barContainter div.active:hover {
+				height: 20px;
+			}
+			
+			#barContainter:hover .active {
+				height: 5px;
+			}
+			#barContainter:hover span {
+				display: none !important;
+			}
+			
+			#barContainter > div:hover span {
+				 display: block!important; 
+			}
+			
+			#barContainter > div {
+				
+				clear: both;
+				padding-bottom: 1px;
+				height: 4px;
+				cursor: pointer;
+				opacity: 0.8;
+			}
+			#barContainter > div:hover {
+
+				height: 20px;
+				
+				opacity: 1;
+
+
+			}
+			#barContainter > div:hover .mass > div,  #barContainter > div:hover .impact > div{
+				
+
+			}
+			#barContainter > div:hover > div{
+				background: #FFF;
+				padding-bottom: 3px;
+				padding-top: 2px;
+
+				/* -webkit-transition: background 100ms linear; */
+			}
+
+
+			#barContainter div.active {
+				height: 20px;
+				
+				opacity: 1;
+			}
+			#barContainter > div.active > div{
+				background: #FFF;
+				padding-bottom: 3px;
+				padding-top: 2px;
+			}
+			#barContainter > div.active span {
+				 display: block; 
+			}
+			#barContainter > div.active .mass > div,  #barContainter > div.active .impact > div{
+				
+			}
+			#barContainter > div:hover > div {
+
+			}
+			#barContainter > div > div {
+				float: left;
+				
+				height: 100%;
+			}
+			#barContainter .mass {
+				width: 200px;
+			}
+			#barContainter .impact {
+				width: 200px;
+			}
+			#barContainter .mass div {
+				float: right;
+				background: #303030;
+				height: 100%;
+				border-right: 1px solid #F2F2F2;
+				
+			}
+			#barContainter .impact div {
+				float: left;
+				background: #9B7757;
+				height: 100%;
+			}
+			#barContainter span {
+				position: absolute;
+				display: none;
+				padding-left: 6px;
+				padding-top: 3px;
+				font-size: 13px;
+				z-index: 100;
+			}
+			#barContainter .impact span {
+				right: 10px;
+			}
+
+
+			#right {
+				right: 0px;
+				width: 400px;
+				padding-left: 12px;
+				position: absolute;
+				z-index: 400;
+				background-color: rgba(255,255,255,0.5);
+			}
+			#rightBack {
+				display: none;
+				right: 0px;
+				height: 100%;
+				width: 408px;
+				position: absolute;
+				z-index: 300;
+				background: #FFFFFF;
+				opacity: 0.4;
+			}
+			
+			#left {
+				position: absolute;
+				
+				z-index: 200;
+			}
+			
+			
+			.title {
+				width: 400px;
+
+				position: absolute;
+				padding-left:30px;
+				padding-top: 10px;
+				font-size:11px;
+				z-index:55;
+				top:0;
+				float: left;
+				opacity: 0.9;
+
+
+			}
+			.title h1 {
+
+			}
+			#history {
+				width: 300px;
+				position: absolute;
+				z-index: 100;
+				
+				top: 500px;
+			}
+			#history .description {
+				height: 260px;
+				width: 260px;
+				
+			}
+			#history .description:hover {
+				z-index: 200;
+				opacity: 1;
+			}
+			#history .description>div:hover{
+				height: 550px;
+				-webkit-transition: height 300ms ease;
+			}
+			#history .description>div{
+				height: 260px;
+				overflow: hidden;
+				-webkit-transition: height 300ms ease;
+			}
+			
+			#gradient {
+			    position:absolute;
+			    z-index:2;
+			    top:500px;
+			    right:0; bottom:0; left:0;
+			    height:300px;
+			    
+			    background: -moz-linear-gradient(top,  rgba(242, 242, 242,0) 0%, rgba(242, 242, 242,1) 70%);
+			    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(242, 242, 242,0)), color-stop(70%,rgba(242, 242, 242,1)));
+			    background: -webkit-linear-gradient(top,  rgba(242, 242, 242,0) 0%,rgba(242, 242, 242,1) 70%);
+			    background: -o-linear-gradient(top,  rgba(242, 242, 242,0) 0%,rgba(242, 242, 242,1) 70%);
+			    background: -ms-linear-gradient(top,  rgba(242, 242, 242,0) 0%,rgba(242, 242, 242,1) 70%);
+			    background: linear-gradient(to bottom,  rgba(242, 242, 242,0) 0%,rgba(242, 242, 242,1) 70%);
+			    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00F2F2F2', endColorstr='#F2F2F2',GradientType=0 );
+
+			}
+
+			#content {
+				width: 520px;
+				position: absolute;
+				z-index: 100;
+				left:320px;
+				top: 530px;
+			}
+
+			#content>div {
+				
+				position: relative;
+				
+				margin-right: 10px;
+				margin-bottom: 10px;
+				font-size: 11px;
+				padding: 10px;
+				background: #FFF;
+				float: left;
+				opacity: 0.9;
+			}
+			#content .twitter {
+				width: 230px;
+				overflow: hidden;
+			}
+			#content .youtube {
+				width: 230px;	
+				overflow: hidden;
+			}
+			#content .flickr {
+				width: 230px;
+				height: 230px;
+				overflow: hidden;	
+			}
+		</style>
+        
+
+        
+	</head>
+	<body> 
+		<div id="top"></div>
+		<div id="sattelite"></div>
+		<div id="gradient"></div>
+		<div class="title">
+			        	
+			            	<h1>MEDIA IMPACT</h1>
+			            	<p>This visualization explores the media impact of meteorites on the web. 
+			            		We gathered data from Google, Bing, Twitter, Flickr and Youtube to determine 
+			            		the popularity of each meteorite and show their virtual depiction.
+			            		<br>More on <a href="http://visualizing.org/visualizations/media-impact">visualizing.org</a>, the <a href="https://github.com/cpietsch/media-impact">documentation</a> on how und why is on the way.</p>
+			            
+			        </div>
+
+        </div>
+    </div>
+
+ 	<div id="left">
+ 		<div class="description">
+	        <div>
+	        	<div class="descriptionBlocks">
+	            	<h1 class="name">Meteorite</h1>
+	            	<div class="chart" style="margin-top:20px;">
+            </div>
+	            	<p><i class="found">found</i> <em class="year">1982</em> in <em class="place">Santiago</em></p>
+	            </div>
+	            
+	            <div class="descriptionBlocks">
+	            	<p>Mass in kg<span class="mass">128737281</span></p>
+	            </div>
+	            
+	             <div class="descriptionBlocks">
+	            	<p>Total Impact <span class="impact">1245353</span></p>
+	            	<p>Google <span class="google small">53</span></p>
+					<p>Bing <span class="bing small">13</span></p>
+	            	<p>Youtube <span class="youtube small">43</span></p>
+	            	<p>Twitter <span class="twitter small">23</span></p>
+	            	<p>Flickr <span class="flickr small">21</span></p>
+	            	
+	            </div>
+
+	            <div class="descriptionBlocks">
+
+	            </div>
+	        </div>
+	    </div>
+ 	</div>
+ 	<div id="history">
+ 		
+ 	</div>
+ 	<div id="content">
+ 		
+ 	</div>
+
+ 	<div id="right">
+ 		<div id="sort">
+ 			<span class="name"><a id="sortName" href="#Name">name</a></span>
+ 			<span class="mass"><a id="sortMass" href="#Mass">mass</a></span>
+ 			<span class="impact"><a id="sortImpact" class="active" href="#Impact">impact</a></span>
+ 			<span class="year"><a id="sortYear" href="#Year">year</a></span>
+ 		</div>
+		<div id="barContainter">
+			<!--
+			<div>
+				<div>
+					<div class="massBar"></div>
+				</div>
+				<div>
+					<div class="impactBar"></div>
+				</div>
+			</div>
+		    -->
+		</div>
+	</div>
+
+		<script type="text/javascript" src="lib/sattelite.js"></script>	
+		<script type="text/javascript" src="app.js"></script>			
+    </body>
+</html>
