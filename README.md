@@ -16,6 +16,72 @@ https://incom.org/workspace/4324
 
 ![](https://raw.githubusercontent.com/cpietsch/media-impact/master/dataviz-pietsch/dataviz-pietsch.004.jpeg)
 
+
+## Idea
+What is the media impact of meteors on the internet and how to relate this impact to mass, year of impact and other parameters?
+http://zeigma.com/impact
+Data acquisition
+
+## How to obtain known values for more than 30000 meteorites?
+First of all we have to clarify what is relevant data. To do this, we searched Google, Bing, Flickr, Youtube and Twitter with a specific keyword phrase: "NAME OF METEROITE meteorite". This search phrase returned the clearest results about the actual meteorite we were looking for. Other combinations returned very inaccurate results and would have skewed our ranking. We then took the number of search results to determine the level of awareness.
+Scraping: The term "screen scraping" generally covers all methods of extracting text from computer screens. At present, however, the term is used almost exclusively in relation to websites (hence also web scraping) http://de.wikipedia.org/wiki/Screen_Scraping
+Google
+
+## Scrape the shit out of it, the google way
+At the beginning of the research, the number of hits on Google seemed to be the most relevant. That's why we first tried to aggregate data from Google, which unfortunately turned out to be more difficult than we thought.
+There are 2 ways to get the content of the hit lists from google: pay for it or with a little effort scrape the data yourself.
+The first way is to use the very well documented google search api https://developers.google.com/web-search/docs/ and pay 5$ for 1000 requests. That makes with 30000 meteorites nearly 150$. Fuck. Quite brazen, if you consider that google uses the data it works with for free.
+The second variant uses the automated scrape of google. According to google this is illegal, and they also try to prevent this with captcha stop pages. So how do I scrape pages that do not want to be scraped.
+A good introduction was the talk of Asheesh Laroia (http://www.youtube.com/watch?v=52wxGESwQSA) which I had to stop after about an hour because my head exploded. I didn't want to work that lowlevel and looked for alternatives in an acceptable programming language: Javascript.
+I found in Phantom.js an acceptable companion in my journey through the scraping jungle. Phantom.js is a headless webkit browser, which means that you can open web pages in secret and control them with Javascript. Especially the screenshot function proved to be useful to trick the captcha pages from Google. These come up every now and then when you scrap google.
+My phantom.js algorithm works like this:
+create a browser with random screen size and BrowserAgent
+open Google.com and wait a bit
+fill in the search field, wait a bit and submit it
+if no captcha comes, save the page and continue
+if a captcha comes, take a screenshot of the captcha and wait 20 seconds. then drop the solved captcha and fill it in the field. save the following page
+wait a bit and start from the beginning
+
+## Captcha
+How to solve a captcha automatically?
+You can use the api of deathbycaptcha.com. This service usually solves a captcha after about 10 seconds.
+How? Rumor has it that the captcha is typed by hand somewhere in India. Thanks to opensource and github I was able to build a small node.js script that listens to a certain directory for captcha images and when one comes, taps the api and then saves the captcha word to a file that is read again by phantom.js. Easy.
+Armed with this script we scanned google in parallel from multiple machines. The whole thing is scalable, and useful for other projects too.
+
+##Beating google with its own weapons
+By chance I found another way to scrap google: with Google itself. There are 2 weapons for this: Google Spreadsheet and Google App Script.
+Google Spreadsheet is damn powerful and offers the magic function ImportXML which allows to parse external xml-files. Since HTML is XML you can use importXml(\"https://www.google.de/search?output=search&sclient=psy-ab&oq=&gs_l=&pbx=1&q=%22NAMEDESMETEROITS%22 meteorite\", \"//*[@id='resultStats']\") to access the result div in google search. Easy. Unfortunately Google limits the requests per spreadsheet to 50. Shit. Could you maybe automatically create spreadsheets with the 50 requests per sheet and then spread the 3000 meteroites over many spreadsheets ? Yes! With Google App Script.
+Google App Script is a Javascript environment with which you can control almost all Google products - including Spreadsheet. The script to create the spreadsheets with the ImportXml commands can be found here.
+Furthermore App Script offers the possibility to save files directly, and thus also the Google search engine HTMLs themselves. Killer factor #2 is, since Google App Script itself comes from the Google server, there are no captcha stop pages, which allows fast scraping of Google Search. The script is available here.
+  
+## If you can beat Google, you can beat them all
+Scraping Bing, Twitter, Youtube and Flickr was no longer a problem thanks to the acquired skills on the one hand and the well-documented and open APIs on the other.
+Only Twitter proved to be unresponsive, which made us switch to the Topsy api for aggregating Twitter results. Here they make just as much money with the data as Google does.
+That's about it on the topic of data aggregation, in detail I got to know and used the following tools:
+- Casper.js - a wrapper for Phantom.js
+- Phantom.js - a headless webkit that can be controlled via Javascript
+- Spooky.js - a wrapper for Casper.js that can be used in Node.js
+- Node.js - used to tap the DeathByCaptcha api, process the aggregated result HTMLs, filehandling, merging, MultiTool
+- Mongo DB - a document driven database where the data was collected and later exported as csv
+- Google Script, Google Spreadsheet - Scraping
+- D3 - visualization and data handling in Javascript
+
+## Visualization
+The data collection turned out to be a bit more complex than expected, so there wasn't too much time left for the actual visualization.
+The visualization was created in a hau-ruck process and grew in iterations due to the repeated postponement of the deadline of the contests. Basically, it should be simple, quick to understand and a fusion of visualization and website.
+On the one hand it consists of a bar chart on the right side and on the other hand a content area on the left side. Aesthetics came first, that's why the satellite projection in the background is not always informative (since no proper localization is possible).
+The impact values are visualized in detail by radar chart and stored in a history to allow later comparison.
+In general, despite the short time, a respectable visualization has come out whereby the potential of the aggregated data was only marginally exploited.
+Still planned were:
+Animation of the impact on the map with attracting particles representing the media content.
+Extension of the bar chart with various filters and sorting methods.
+Performance optimization
+Combination possibilities in the data sources
+      
+## Summary
+Learned a lot about data aggregation and scraping in particular. Also that creating a visualization needs a lot of preparatory work.
+And as always, the process is the outcome.
+
 # GERMAN Documentation
 
 ## Idee
